@@ -1,0 +1,114 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.active{
+  color: #ff9f0d;
+}
+
+@import url("https://fonts.googleapis.com/css2?family=Cabin:ital,wght@0,400..700;1,400..700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Miniver&display=swap");
+// src/components/GlobalStyles/GlobalStyles.scss
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: rgb(254, 254, 254, 100%);
+  font-family: Arial, sans-serif;
+  font-family: "Cabin", sans-serif;
+  // background-color: black;
+  color: #fff;
+}
+
+:root {
+  --primary: #ff9f0d;
+  --white: #fff;
+  --text_gray: #4f4f4f;
+}
+
+.title_home {
+  font-family: "Miniver", cursive;
+}
+
+.home_img_1 {
+  background-image: url("http://localhost:4000/images/Group 1000002107.png");
+}
+
+.home_img_2 {
+  background-image: url("http://localhost:4000/images/Restraind creative Process.png");
+}
+
+.aboutus_img_2 {
+  background-image: url("http://localhost:4000/images/pab_4.png");
+}
+
+footer::before {
+  content: "";
+  display: block;
+  width: 800px;
+  height: 2px;
+  background-color: #ff9f0d;
+  margin: 0 auto;
+  border-radius: 999px;
+}
+
+.shop_banner {
+  background-image: url("http://localhost:4000/images/shop_1.png");
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+/* CSS */
+.detai_quantity[type="number"]::-webkit-inner-spin-button,
+.detai_quantity[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.detai_quantity[type="number"] {
+  -moz-appearance: textfield;
+}
+
+.detai_quantity:focus {
+  outline: none;
+  border: transparent;
+}
+
+/* Khi hover, không hiển thị */
+.detai_quantity[type="number"]:hover::-webkit-inner-spin-button {
+  display: none;
+}
+
+.trs-1 {
+  transition: 1s;
+}
+
+.ab_ov_1 {
+  background-color: rgba($color: #ff9f0d, $alpha: 85%);
+}
+
+.login_bg {
+  background-image: url("https://images.pexels.com/photos/784633/pexels-photo-784633.jpeg?auto=compress&cs=tinysrgb&w=600");
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.admin_formadd_pr {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.admin_formadd_pr::-webkit-scrollbar {
+  display: none;
+}

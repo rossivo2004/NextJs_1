@@ -1,0 +1,15 @@
+.swiper-button-next,
+.swiper-button-prev {
+  color: #000; /* Màu của nút */
+  background-color: rgba(255, 255, 255, 0.8); /* Màu nền */
+  padding: 10px; /* Kích thước padding */
+  border-radius: 50%; /* Bo tròn nút */
+}
+
+.swiper-button-next {
+  right: 10px; /* Khoảng cách từ cạnh phải */
+}
+
+.swiper-button-prev {
+  left: 10px; /* Khoảng cách từ cạnh trái */
+}
