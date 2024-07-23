@@ -6,7 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useState, useEffect } from 'react';
 
 import TabProductDetail from '../../../components/TabProductDetail/TabProductDetail';
-import BoxProduct from '../../../components/BoxProduct/BoxProduct';
+import BoxProduct from '../../../components/BoxProduct/index';
 
 const imageURL = process.env.REACT_APP_IMAGE_URL;
 

@@ -8,10 +8,6 @@ export const CartProvider = ({ children }) => {
     const router = useRouter();
     const [cart, setCart] = useState({ cartItems: [] });
 
-    useEffect(() => {
-        setCartToState();
-    }, []);
-
     const setCartToState = () => {
         const storedCart = localStorage.getItem('cart');
         setCart(storedCart ? JSON.parse(storedCart) : { cartItems: [] });
@@ -25,7 +21,7 @@ export const CartProvider = ({ children }) => {
         stock,
         seller,
         quantity = 1,
-        newQuantity = null, // Add newQuantity parameter
+        newQuantity = null, 
     }) => {
         const item = { product, name, price, image, stock, seller, quantity };
         const existingItemIndex = cart.cartItems.findIndex(
@@ -33,6 +29,7 @@ export const CartProvider = ({ children }) => {
         );
     
         let newCartItems;
+        
         if (existingItemIndex !== -1) {
             newCartItems = cart.cartItems.map((i, index) =>
                 index === existingItemIndex
@@ -46,7 +43,6 @@ export const CartProvider = ({ children }) => {
         localStorage.setItem('cart', JSON.stringify({ cartItems: newCartItems }));
         setCart({ cartItems: newCartItems });
     };
-    
 
     const deleteItemCart = (id) => {
         const newCartItems = cart?.cartItems?.filter((i) => i.product !== id);
@@ -54,6 +50,10 @@ export const CartProvider = ({ children }) => {
         localStorage.setItem('cart', JSON.stringify({ cartItems: newCartItems }));
         setCart({ cartItems: newCartItems });
     };
+
+    useEffect(() => {
+        setCartToState();
+    }, []);
 
     return (
         <CartContext.Provider value={{ cart, addItemToCart, deleteItemCart }}>

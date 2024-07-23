@@ -18,6 +18,8 @@ module.exports = {
         'price': '#e8b007',
         'text_1': '#828282',
         'page': '#E5E5E5',
+        'active_admin_nav': 'rgba(165, 165, 165, 0.30)',
+        'hover_admin_nav': 'rgba(165, 165, 165, 0.09)',
       },
     }
   },

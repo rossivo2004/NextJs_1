@@ -1,12 +1,15 @@
-import { CartProvider } from "../context/CartContext";
-import { AuthProvider } from "../context/AuthContext"
+'use client'
+
+import { AuthProvider } from "../context/AuthContext";
+import { Provider } from "react-redux";
+import { store } from '../redux/store.js'
 
 export function GlobalProvider({ children }) {
     return (
         <AuthProvider>
-            <CartProvider>
+            <Provider store={store}>
                 {children}
-            </CartProvider>
+            </Provider>
         </AuthProvider>
     )
 }

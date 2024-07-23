@@ -6,6 +6,8 @@ import toast, { Toaster } from 'react-hot-toast';
 
 import './globals.scss'
 import { GlobalProvider } from "./GlobalProvider"
+// import Providers from '../redux/Provider'
+
 
 const imageURL = process.env.REACT_APP_IMAGE_URL;
 
@@ -23,10 +25,10 @@ export default function RootLayout({ children }) {
         <html lang="en">
             <link rel="icon" href={`${imageURL}/favicon.ico`} />
             <GlobalProvider>
-                <body className={inter.className}>
-                    <div><Toaster /></div>
-                    <main className=''>{children}</main>
-                </body>
+                    <body className={inter.className}>
+                        <div><Toaster /></div>
+                        <main className=''>{children}</main>
+                    </body>
             </GlobalProvider>
         </html>
     )

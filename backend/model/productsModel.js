@@ -5,20 +5,10 @@ const productsSchema = new Schema({
     name_pr: { type: String, required: true },
     category_pr_tag: { type: String, required: true },
     price_pr: { type: Number, required: true },
-    // images_pr: [
-    //     {
-    //         public_id: {
-    //             type: String,
-    //         },
-    //         url: {
-    //             type: String,
-    //         },
-    //     },
-    // ],
-    image_pr_1: {type: String, require : true},
+    image_pr_1: { type: String },
     description_pr: { type: String, required: true },
     description_pr_detail: { type: String, required: true },
-    discount_pr: { type: Number, required: true },
+    discount_pr: { type: Number },
     quantity_pr: { type: Number, required: true },
     view_pr: { type: Number },
     weight_pr: { type: Number, required: true },

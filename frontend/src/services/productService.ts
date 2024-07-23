@@ -11,6 +11,16 @@ export const getProducts = async (page = 1) => {
     }
 };
 
+export const getAllProducts = async () => {
+    try {
+        const response = await apiClient.get(`/products`);
+        return response.data;
+    } catch (error) {
+        console.error('Failed to fetch products:', error);
+        throw error;
+    }
+};
+
 export const getProductSale = async () => {
     try {
         const response = await apiClient.get(`/products/discount/discountedProducts`);

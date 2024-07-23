@@ -8,32 +8,45 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBars, faCartShopping, faSearch, faUser } from '@fortawesome/free-solid-svg-icons';
 import Cookies from 'js-cookie';
 import { Avatar, Dropdown } from "flowbite-react";
+import { useSelector, useDispatch } from 'react-redux';
 
 import CartSlideOver from '../CartSlideOver/CartSlideOver';
 import NavMenuMobile from '../NavMenuMobile/NavMenuMobile';
 import SearchHeader from '../SearchHeader/SearchHeader';
-import CartContext from '../../context/CartContext'
 
-const imageURL = process.env.REACT_APP_IMAGE_URL;
+const imageURL = process.env.NEXT_PUBLIC_IMAGE_URL_FE;
 
 function Header() {
     const [user, setUser] = useState(null);
     const pathname = usePathname();
     const [cartOpen, setCartOpen] = useState(false);
     const [navOpen, setNavOpen] = useState(false);
+    const dispatch = useDispatch();
 
-
-    const { cart } = useContext(CartContext);
-    const cartItems = cart?.cartItems;
+    const cart = useSelector((state) => state.cart);
+    const [isMounted, setIsMounted] = useState(false);
 
     useEffect(() => {
         const userString = Cookies.get('user');
         const userData = userString ? JSON.parse(userString) : null;
         setUser(userData);
 
-        console.log(userData);
-
+        setIsMounted(true);
     }, []);
+
+
+    const handleToggleCart = () => {
+        setCartOpen(!cartOpen);
+    };
+
+    const logout = () => {
+        Cookies.remove('user');
+        Cookies.remove('accessToken');
+        Cookies.remove('refreshToken');
+        setUser(null);
+        window.location.reload();
+    }
+
 
     return (
         <header className='lg:mb-2 z-20 fixed top-0 bg-black w-full'>
@@ -73,7 +86,7 @@ function Header() {
                     <div className='mx-2'>
                         {user ? (
                             <Dropdown
-                                label={<Avatar alt="User settings" img={`http://localhost:3000/images/${user.img}`} rounded className='bg-white rounded-full' />}
+                                label={<Avatar alt="User settings" img={`http://localhost:3000/images/${user.image_us}`} rounded className='bg-white rounded-full' />}
                                 arrowIcon={false}
                                 inline
                                 placement='bottom-end'
@@ -83,11 +96,9 @@ function Header() {
                                     <span className="block text-sm">Wellcome</span>
                                     <span className="block truncate text-sm font-semibold">{user.name}</span>
                                 </Dropdown.Header>
-                                <Dropdown.Item className='hover:bg-gray-100'>Dashboard</Dropdown.Item>
-                                <Dropdown.Item className='hover:bg-gray-100'>Settings</Dropdown.Item>
-                                <Dropdown.Item className='hover:bg-gray-100'>Earnings</Dropdown.Item>
+                                <Dropdown.Item className='hover:bg-gray-100'><a href="/profile">Dashboard</a></Dropdown.Item>
                                 <Dropdown.Divider />
-                                <Dropdown.Item className='hover:bg-gray-100'>Sign out</Dropdown.Item>
+                                <Dropdown.Item className='hover:bg-gray-100' onClick={logout}>Sign out</Dropdown.Item>
                             </Dropdown>
                         ) : (
                             <Link className='' href="/login">
@@ -100,7 +111,11 @@ function Header() {
 
                     <div className='relative h-5'>
                         <FontAwesomeIcon icon={faCartShopping} className='text-white relative cursor-pointer hover:text-orange-300 h-6 w-6 mx-2' onClick={() => setCartOpen(true)} />
-                        <div className='text-white absolute right-0 bg-black h-4 w-4 rounded-full flex items-center justify-center border border-white text-xs -bottom-2'>{cartItems?.length || 0}</div>
+                        {isMounted && (
+                            <div className='text-white absolute right-0 bg-black h-4 w-4 rounded-full flex items-center justify-center border border-white text-xs -bottom-2'>
+                                {cart.totalQuantity}
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>

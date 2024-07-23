@@ -27,7 +27,7 @@ const checkImg = (req, file, cb) => {
 
 const upload = multer({ storage: storage, fileFilter: checkImg });
 
-router.post('/add', authen, upload.single('image_pr_1'), async (req, res) => {
+router.post('/add', upload.single('image_pr_1'), async (req, res) => {
     try {
         console.log('Request Body:', req.body);
         console.log('Request Files:', req.file);
@@ -140,7 +140,7 @@ router.get('/sanphamlienquan/:productid', async (req, res) => {
 });
 
 
-router.delete('/delete/:id', authen, async (req, res) => {
+router.delete('/delete/:id', async (req, res) => {
     try {
         const { id } = req.params;
 
@@ -151,11 +151,10 @@ router.delete('/delete/:id', authen, async (req, res) => {
             return res.status(404).json({ message: 'Sản phẩm không tồn tại' });
         }
 
-        // Remove the product
+        const imagePath = path.join(__dirname, '../public/images/', product.image_pr_1);
+
         await productsController.removeProduct(id);
 
-        // Delete the image file
-        const imagePath = path.join(__dirname, '../public/images/', product.image_pr_1);
         fs.unlink(imagePath, (err) => {
             if (err) {
                 console.error('Error deleting image file:', err);
@@ -170,7 +169,7 @@ router.delete('/delete/:id', authen, async (req, res) => {
     }
 });
 
-router.put('/edit/:id', authen, async (req, res) => {
+router.put('/edit/:id', async (req, res) => {
     try {
         const { id } = req.params;
         const body = req.body;

@@ -6,7 +6,10 @@ const orderSchema = new Schema({
   cartItems: { type: Array, required: true },
   totalAmount: { type: Number, required: true },
   orderDate: { type: Date, required: true },
-  status: { type: String, required: true }, // Ensure this is a string
+  orderStatus: {
+    type: String,
+    default: "Processing",
+  },
   fullName: { type: String, required: true },
   phoneNumber: { type: String, required: true },
   address: { type: String, required: true }

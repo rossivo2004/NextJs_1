@@ -16,7 +16,7 @@ import { icon } from '@fortawesome/fontawesome-svg-core';
 import { Description } from '@headlessui/react';
 
 
-const imageURL = process.env.REACT_APP_IMAGE_URL;
+const imageURL = process.env.NEXT_PUBLIC_IMAGE_URL_FE;
 
 export const metadata = {
     title: 'FoodHaven',
@@ -24,6 +24,7 @@ export const metadata = {
   };
 
 const HomePage = () => {
+    console.log(1);
     return (
         <div className='bg-black pt-20'>
             <div className='lg:px-40 px-3 flex justify-between items-center mb-40'>

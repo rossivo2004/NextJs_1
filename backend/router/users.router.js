@@ -10,6 +10,9 @@ const jwt = require('jsonwebtoken');
 const JWT_SECRET = 'shhhhhh';
 const JWT_EXPIRES_IN = '1h';
 const authen = require('../middleware/authen');
+const fs = require('fs');
+
+const upload = multer({ dest: 'public/' });
 
 router.get('/', async (req, res) => {
     try {
@@ -153,5 +156,41 @@ router.post('/reset_password', async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 });
+
+// Endpoint để upload ảnh
+router.post('/upload', upload.single('image'), async (req, res) => {
+    try {
+        if (!req.file) {
+            return res.status(400).json({ message: 'No file uploaded' });
+        }
+        res.status(200).json({ message: 'File uploaded successfully', filename: req.file.filename });
+    } catch (error) {
+        console.error('Error uploading file:', error.message);
+        res.status(500).json({ message: error.message });
+    }
+});
+
+// Endpoint để xóa ảnh
+router.delete('/delete-image/:filename', async (req, res) => {
+    try {
+        const { filename } = req.params;
+        const filePath = path.join(__dirname, '../public', filename);
+
+        if (!fs.existsSync(filePath)) {
+            return res.status(404).json({ message: 'File not found' });
+        }
+
+        fs.unlink(filePath, (err) => {
+            if (err) {
+                return res.status(500).json({ message: 'Error deleting file', error: err.message });
+            }
+            res.status(200).json({ message: 'File deleted successfully' });
+        });
+    } catch (error) {
+        console.error('Error deleting file:', error.message);
+        res.status(500).json({ message: error.message });
+    }
+});
+
 
 module.exports = router;

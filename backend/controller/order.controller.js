@@ -16,25 +16,24 @@ async function createOrder(body) {
         const { cartItems, totalAmount, userId, orderDate, status, fullName, phoneNumber, address } = body;
 
         const orderData = {
-            cartItems: cartItems,
-            totalAmount: totalAmount,
-            userId: userId,
-            orderDate: orderDate,
-            status: status,
-            fullName: fullName,
-            phoneNumber: phoneNumber,
-            address: address
+            cartItems,
+            totalAmount,
+            userId,
+            orderDate: orderDate || new Date(),
+            status,
+            fullName,
+            phoneNumber,
+            address
         };
 
         const newOrder = new ordersModel(orderData);
         const savedOrder = await newOrder.save();
         return savedOrder;
     } catch (error) {
-        console.log('Error:', error);
+        console.error('Error:', error);
         throw error;
     }
 }
-
 //lấy sản phẩm theo id
 async function getOrderById(id) {
     try {

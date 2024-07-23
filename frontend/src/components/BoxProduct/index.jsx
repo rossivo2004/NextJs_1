@@ -1,41 +1,40 @@
-require('dotenv').config();
-
-import React, { useContext } from 'react';
-import formatNumber from '../../option/op_formatNumber';
+import React from 'react';
 import { faCartArrowDown, faEye, faHeart } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import toast from 'react-hot-toast';
-import CartContext from '../../context/CartContext';
+import { useSelector, useDispatch } from 'react-redux';
 
-const imageURL = process.env.REACT_APP_IMAGE_URL;
-const URL = process.env.REACT_APP_IMAGE_URL_BE;
-const URL_FE = process.env.NEXT_PUBLIC_API_BASE_URL;
+import { addItem } from '../../redux/slices/cartSlice';
+import formatNumber from '../../option/op_formatNumber';
 
-function BoxProduct({ product, color, bgColor }) {
-  const { addItemToCart } = useContext(CartContext);
+const imageURLBE = process.env.NEXT_PUBLIC_IMAGE_URL_BE;
+
+const BoxProduct = ({ product, color, bgColor }) => {
+  const dispatch = useDispatch();
+  const cart = useSelector((state) => state.cart);
 
   if (!product) return null;
 
   const priceNew = product.price_pr - (product.price_pr * product.discount_pr) / 100;
 
-  const addToCartHandle = () => {
-    addItemToCart({
-      product: product._id,
-      name: product.name_pr,
-      price: priceNew,
-      image: product.image_pr_1,
-      stock: product.stoke_pr,
-      seller: product.seller_pr,
-    });
-
-    toast.success(`${product.name_pr} has been added to your cart!`);
+  const handleAddToCart = () => {
+    dispatch(addItem({
+      _id: product._id,
+      name_pr: product.name_pr,
+      image_pr: product.image_pr_1,
+      price_pr: product.price_pr - (product.price_pr * product.discount_pr) / 100,
+      discount_pr: product.discount_pr,
+      quantity: 1,
+    }));
+    toast.success('Added to cart!');
   };
+
 
   return (
     <div className={`flex justify-center items-center h-[330px] w-full rounded-lg overflow-hidden shadow-md ${bgColor}`}>
       <div className="relative group flex flex-col justify-start h-full w-full">
         <div className="h-[200px] mb-4">
-          <img src={`http://localhost:3000/images/${product.image_pr_1}`} alt="" className="w-full h-[200px] object-cover" />
+          <img src={`${imageURLBE}/${product.image_pr_1}`} alt={product.name_pr} className="w-full h-[200px] object-cover" />
         </div>
         <div className="px-2 flex-1 flex flex-col mb-4">
           <div className={`font-semibold mb-2 h-12 text-lg text-start ${color}`}>{product.name_pr}</div>
@@ -53,10 +52,10 @@ function BoxProduct({ product, color, bgColor }) {
         <div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
         <div className="absolute inset-0 flex justify-center items-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
           <div className="flex space-x-2">
-            <a href={`${URL_FE}/products/${product._id}`} className="w-12 h-12 bg-white flex items-center justify-center rounded-lg text-primary hover:bg-primary hover:text-white cursor-pointer">
+            <a href={`${process.env.NEXT_PUBLIC_API_BASE_URL}/products/${product._id}`} className="w-12 h-12 bg-white flex items-center justify-center rounded-lg text-primary hover:bg-primary hover:text-white cursor-pointer">
               <FontAwesomeIcon icon={faEye} className="text-lg" />
             </a>
-            <div onClick={addToCartHandle} className="w-12 h-12 bg-white flex items-center justify-center rounded-lg text-primary hover:bg-primary hover:text-white cursor-pointer">
+            <div className="w-12 h-12 bg-white flex items-center justify-center rounded-lg text-primary hover:bg-primary hover:text-white cursor-pointer" onClick={handleAddToCart}>
               <FontAwesomeIcon icon={faCartArrowDown} className="text-lg" />
             </div>
             <div className="w-12 h-12 bg-white flex items-center justify-center rounded-lg text-primary hover:bg-primary hover:text-white cursor-pointer">
@@ -72,6 +71,6 @@ function BoxProduct({ product, color, bgColor }) {
       </div>
     </div>
   );
-}
+};
 
 export default BoxProduct;

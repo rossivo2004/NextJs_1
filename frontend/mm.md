@@ -1,245 +1,116 @@
 "use client";
-require('dotenv').config();
-import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
 
-import { faFilter, faXmark } from '@fortawesome/free-solid-svg-icons';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faBars, faCartShopping, faUser } from '@fortawesome/free-solid-svg-icons';
+import Cookies from 'js-cookie';
+import { Avatar, Dropdown } from 'flowbite-react';
+import { useSelector } from 'react-redux';
 
-import Paginations from '../../../components/Paginations/Paginations';
-import BoxProduct from '../../../components/BoxProduct/BoxProduct';
-import Shop_Filter_Price from '../../../components/Shop_Filter_Price/Shop_Filter_Price';
-import Loading from '../../../components/Loading/Loading';
+import CartSlideOver from '../CartSlideOver/CartSlideOver';
+import NavMenuMobile from '../NavMenuMobile/NavMenuMobile';
+import SearchHeader from '../SearchHeader/SearchHeader';
 
-import { getProducts } from '../../../services/productService';
-import { getCategories } from '../../../services/categoryService';
-import { getProductsCountByCategory } from '../../../services/productService';
-import { getFilteredProductsByPrice } from '../../../services/productService';
+const imageURL_FE = process.env.NEXT_PUBLIC_IMAGE_URL_FE;
 
-const imageURL = process.env.REACT_APP_IMAGE_URL;
-const URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+function Header() {
+    const [user, setUser] = useState(null);
+    const pathname = usePathname();
+    const [cartOpen, setCartOpen] = useState(false);
+    const [navOpen, setNavOpen] = useState(false);
+    const [mounted, setMounted] = useState(false);
 
+    const totalQuantity = useSelector((state) => state.cart.totalQuantity);
 
+    useEffect(() => {
+        setMounted(true);
+        const userString = Cookies.get('user');
+        const userData = userString ? JSON.parse(userString) : null;
+        setUser(userData);
 
-function Shop(props) {
-  const [showFilter, setShowFilter] = useState(false);
-  const [products, setProducts] = useState([]);
-  const [categories, setCategories] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(0);
-  const [loading, setLoading] = useState(true);
-  const [sort, setSort] = useState("ascending");
-console.log(props.searchParams);
-  useEffect(() => {
-    document.title = "FoodHaven Shop";
+        console.log(imageURL_FE);
 
-    const fetchData = async () => {
-      try {
-        const [productsData, categoriesData] = await Promise.all([getProducts(currentPage), getCategories()]);
-        
-        const categoriesWithCounts = await Promise.all(
-          categoriesData.map(async (category) => {
-            const count = await getProductsCountByCategory(category.tag_ct);
-            return { ...category, count: count.count };
-          })
-        );
+    }, []);
 
-        setProducts(productsData.products);
-        setCurrentPage(productsData.currentPage);
-        setTotalPages(productsData.totalPages);
-        setCategories(categoriesWithCounts);
-        setLoading(false);
-      } catch (error) {
-        console.error('Failed to fetch products or categories:', error);
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, [currentPage]);
-
-  useEffect(() => {
-    handleSort(products);
-  }, [sort]);
-
-  function handleSort(listPro) {
-    let cpyPro = [...listPro];
-    if (sort === "ascending") {
-      cpyPro.sort((firstPro, secondPro) => firstPro.name_pr.localeCompare(secondPro.name_pr));
-    } else if (sort === "desending") {
-      cpyPro.sort((firstPro, secondPro) => secondPro.name_pr.localeCompare(firstPro.name_pr));
+    if (!mounted) {
+        return null;
     }
-    setProducts(cpyPro);
-  }
 
-  const handleFilterByPrice = async (minPrice, maxPrice) => {
-    setLoading(true);
-    try {
-      const filteredProducts = await getFilteredProductsByPrice(minPrice, maxPrice);
-      console.log('Filtered products:', filteredProducts);  // Log the filtered products response
-      setProducts(filteredProducts);  // Ensure you are setting the correct property
-      setCurrentPage(filteredProducts.currentPage);
-      setTotalPages(filteredProducts.totalPages);
-    } catch (error) {
-      console.error('Failed to filter products by price:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
+    return (
+        <header className='lg:mb-2 z-20 fixed top-0 bg-black w-full'>
+            <CartSlideOver open={cartOpen} setOpen={setCartOpen} />
+            <NavMenuMobile open={navOpen} setOpen={setNavOpen} />
 
-  console.log('Products:', products);  
+            <div className='flex px-40 w-full lg:max-w-[1400px] h-[80px] items-center justify-between'>
+                <div className='flex items-center bg-black lg:relative fixed top-0 left-0 lg:w-auto w-full lg:h-auto h-[60px]'>
 
-  return (
-    <div>
-      {/* Filter Overlay */}
-      <div className={`w-full h-screen fixed top-0 left-0 bg-white text-black z-50 transition-transform duration-300 ${showFilter ? 'translate-y-0' : 'translate-y-full'}`}>
-        <div className='p-4'>
-          <button onClick={() => setShowFilter(false)} className='text-black text-3xl'>
-            <FontAwesomeIcon icon={faXmark} />
-          </button>
-        </div>
-        <div className='mb-4 p-4'>
-          <div className='font-bold text-xl mb-2'>Category</div>
-          <div className="form-control">
-            {categories.map((category, i) => (
-              <label className="cursor-pointer label mb-2 flex justify-between" key={category.id}>
-                <span className="label-text text-text_1">{category.name_ct}</span>
-                <p>({category.count})</p>
-              </label>
-            ))}
-          </div>
-        </div>
-        <div className='mb-4 p-4'>
-          <div className='font-bold text-xl mb-2'>Filter By Price</div>
-          <Shop_Filter_Price />
-        </div>
-        <div className='p-4'>
-          <div className='font-bold text-xl mb-2'>Product Tags</div>
-          <div className='flex flex-wrap'>
-            {[...Array(4)].map((_, i) => (
-              <div key={i}>
-                <div className='border-b text-text_1 mr-2 w-fit hover:text-primary border-primary cursor-pointer'>Tag {i + 1}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-      {/* Filter Button for Mobile */}
-      <div className='bg-white text-black text-right p-4 lg:hidden block'>
-        <button onClick={() => setShowFilter(true)} className='text-3xl'>
-          <FontAwesomeIcon icon={faFilter} />
-        </button>
-      </div>
-      {/* Main Content */}
-      <div className='lg:px-40 px-2 bg-white py-4 mb-20'>
-        {/* Breadcrumb */}
-        <div className="mb-4">
-          <ol className="flex items-center whitespace-nowrap">
-            <li className="inline-flex items-center">
-              <a className="flex items-center text-sm text-gray-500 hover:text-blue-600 focus:outline-none focus:text-blue-600 dark:text-neutral-500 dark:hover:text-blue-500 dark:focus:text-blue-500" href="#">
-                Home
-              </a>
-              <svg className="flex-shrink-0 mx-2 overflow-visible size-4 text-gray-400 dark:text-neutral-600" xmlns="http://www.w3.org/2000/svg" width={24} height={24} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
-                <path d="m9 18 6-6-6-6" />
-              </svg>
-            </li>
-            <li className="inline-flex items-center text-sm font-semibold text-primary truncate dark:text-neutral-200" aria-current="page">
-              About Us
-            </li>
-          </ol>
-        </div>
-        <div className='flex lg:flex-row flex-col-reverse gap-10 mb-20'>
-          <div className='lg:w-3/4'>
-            <div className='lg:flex mb-4 hidden'>
-              <div className='flex items-center mr-6'>
-                <div className='mr-4 text-black'>Sort By: </div>
-                <div className="relative w-60 max-w-full mx-auto">
-                  <select value={sort}
-                    onChange={(event) => setSort(event.target.value)}
-                    name="sort" className="w-full px-3 py-2 text-sm text-gray-600 bg-white border rounded-lg shadow-sm outline-none appearance-none">
-                    <option value="" id="">
-                      Please Select Option
-                    </option>
-                    <option value="ascending" id="ascending">
-                      Sort A - Z
-                    </option>
-                    <option value="desending" id="desending">
-                      Sort Z - A
-                    </option>
-                  </select>
+                    <div className='block lg:hidden' onClick={() => setNavOpen(true)}>
+                        <FontAwesomeIcon icon={faBars} className='text-[20px]' />
+                    </div>
+
+                    <div className='logo w-full flex items-center justify-center h-10'>
+                        <img src={`${imageURL_FE}/FoodHaven.png`} alt="Logo" className='lg:w-52 lg:h-20 object-cover' />
+                    </div>
+
+                    <div className='lg:hidden block'>
+                        <div>
+                            <FontAwesomeIcon icon={faCartShopping} className='text-white text-[20px] mx-2' onClick={() => setCartOpen(true)} />
+                        </div>
+                    </div>
                 </div>
-              </div>
-              <div className='flex items-center'>
-                <div className='mr-4 text-black'>Show: </div>
-                <div className="relative w-60 max-w-full mx-auto">
-                  <select className="w-full px-3 py-2 text-sm text-gray-600 bg-white border rounded-lg shadow-sm outline-none appearance-none">
-                    <option>Project manager</option>
-                    <option>Software engineer</option>
-                    <option>IT manager</option>
-                    <option>UI / UX designer</option>
-                  </select>
+                <div className='lg:flex hidden items-center'>
+                    <nav>
+                        <ul className='flex items-center h-[60px] font-bold'>
+                            <li className='pr-3 hover:text-orange-300 relative text-white'><Link className={`link ${pathname === '/' ? 'active' : ''}`} href="/">Home</Link></li>
+                            <li className='px-3 hover:text-orange-300 relative text-white'><Link className={`link ${pathname === '/shop' ? 'active' : ''}`} href="/shop">Shop</Link></li>
+                            <li className='px-3 hover:text-orange-300 relative text-white'><Link className={`link ${pathname === '/aboutus' ? 'active' : ''}`} href="/aboutus">About Us</Link></li>
+                        </ul>
+                    </nav>
                 </div>
-              </div>
-            </div>
-            {/* Product Grid */}
-            <div className='grid lg:grid-cols-3 lg:gap-10 grid-cols-2 gap-3'>
-              {loading ? (
-                <div className='w-[836px]'>
-                  <Loading />
-                </div>
-              ) : (
-                products.length === 0 ? (
-                  <div>No products found.</div>
-                ) : (
-                  products.map((product) => (
-                    <BoxProduct key={product._id} product={product} />
-                  ))
-                )
-              )}
-            </div>
-            <Paginations
-              currentPage={currentPage}
-              totalPages={totalPages}
-              setCurrentPage={setCurrentPage}
-            />
-          </div>
-          {/* Sidebar */}
-          <div className='lg:w-1/4 lg:block hidden px-4 text-black'>
-            <div className='mb-4'>
-              <div className='font-bold text-xl mb-2'>Category</div>
-              <div className="form-control">
-              {categories.map((category, i) => (
-                <a href={`${URL}/shop/${category.tag_ct}`} className="cursor-pointer label mb-2 flex justify-between" key={category.id}>
-                  <span className="label-text text-text_1">{category.name_ct}</span>
-                  <p>({category.count})</p>
-                </a>
-              ))}
-              
-              </div>
-            </div>
-            <div className='mb-4'>
-              <img src={`${imageURL}/shop_2.png`} alt="" className='w-full object-cover h-[300px]' />
-            </div>
-            <div className='mb-4'>
-              <div className='font-bold text-xl mb-2'>Filter By Price</div>
-              <Shop_Filter_Price onApplyFilter={handleFilterByPrice} />
-            </div>
-            <div>
-              <div className='font-bold text-xl mb-2'>Product Tags</div>
-              <div className='flex flex-wrap'>
-                {[...Array(4)].map((_, i) => (
-                  <div key={i}>
-                    <div className='border-b text-text_1 mr-2 w-fit hover:text-primary border-primary cursor-pointer'>Tag {i + 1}</div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
 
-        </div>
-      </div>
-    </div>
-  );
+                <div className='lg:flex hidden items-center'>
+                    <SearchHeader />
+
+                    <div className='mx-2'>
+                        {user ? (
+                            <Dropdown
+                                label={<Avatar alt="User settings" img={`${process.env.NEXT_PUBLIC_IMAGE_URL_BE}/${user.img}`} rounded className='bg-white rounded-full' />}
+                                arrowIcon={false}
+                                inline
+                                placement='bottom-end'
+                                className='w-40'
+                            >
+                                <Dropdown.Header>
+                                    <span className="block text-sm">Welcome</span>
+                                    <span className="block truncate text-sm font-semibold">{user.name}</span>
+                                </Dropdown.Header>
+                                <Dropdown.Item className='hover:bg-gray-100'>Dashboard</Dropdown.Item>
+                                <Dropdown.Item className='hover:bg-gray-100'>Settings</Dropdown.Item>
+                                <Dropdown.Item className='hover:bg-gray-100'>Earnings</Dropdown.Item>
+                                <Dropdown.Divider />
+                                <Dropdown.Item className='hover:bg-gray-100'>Sign out</Dropdown.Item>
+                            </Dropdown>
+                        ) : (
+                            <Link className='' href="/login">
+                                <div>
+                                    <FontAwesomeIcon icon={faUser} className='text-white hover:text-orange-300 h-5 w-5 mx-2' />
+                                </div>
+                            </Link>
+                        )}
+                    </div>
+
+                    <div className='relative h-5'>
+                        <FontAwesomeIcon icon={faCartShopping} className='text-white relative cursor-pointer hover:text-orange-300 h-6 w-6 mx-2' onClick={() => setCartOpen(true)} />
+                        {mounted && totalQuantity > 0 && (
+                            <div className='text-white absolute right-0 bg-black h-4 w-4 rounded-full flex items-center justify-center border border-white text-xs -bottom-2'>{totalQuantity}</div>
+                        )}
+                    </div>
+                </div>
+            </div>
+        </header>
+    );
 }
 
-export default Shop;
+export default Header;

@@ -11,6 +11,16 @@ export const getUser = async () => {
     }
 };
 
+export const getUserDetail = async (id) => {
+    try {
+        const response = await apiClient.get(`/users/${id}`);
+        return response.data;
+    } catch (error) {
+        console.error('Failed to fetch user:', error);
+        throw error;
+    }
+};
+
 // Thêm người dùng mới
 export const addUser = async ({userData} : {userData: string}) => {
     try {
@@ -18,6 +28,17 @@ export const addUser = async ({userData} : {userData: string}) => {
         return response.data;
     } catch (error) {
         console.error('Failed to add user:', error);
+        throw error;
+    }
+};
+
+// Sửa thông tin người ùng
+export const editUser = async (id, userData) => {
+    try {
+        const response = await apiClient.put(`/users/edit/${id}`, userData);
+        return response.data;
+    } catch (error) {
+        console.error('Failed to edit user:', error);
         throw error;
     }
 };
