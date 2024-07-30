@@ -60,6 +60,16 @@ router.get('/', async (req, res) => {
     }
 });
 
+router.get('/all', async (req, res) => {
+    try {
+        const result = await productsController.getAll();
+        res.status(200).json(result);
+    } catch (error) {
+        console.error("Error: ", error);
+        res.status(500).json({ message: error.message });
+    }
+});
+
 router.get('/admin_pr', authen, async (req, res) => {
     try {
         const result = await productsController.getAllProduct(req.query);
@@ -169,11 +179,13 @@ router.delete('/delete/:id', async (req, res) => {
     }
 });
 
-router.put('/edit/:id', async (req, res) => {
+router.put('/edit/:id', upload.single('image_pr_1'), async (req, res) => {
     try {
         const { id } = req.params;
         const body = req.body;
-        const updatedProduct = await productsController.updateByIdProduct(id, body);
+        const file = req.file;
+
+        const updatedProduct = await productsController.updateByIdProduct(id, body, file);
         res.status(200).json({ ProductUpdate: updatedProduct });
     } catch (error) {
         console.error("Error updating product by id: ", error);

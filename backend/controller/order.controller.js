@@ -60,6 +60,47 @@ async function getOrderByIdUser(userId) {
     }
 }
 
+// xóa order theo id 
+async function deleteOrder(id) {
+    try {
+        const result = await ordersModel.findByIdAndDelete(id);
+        return result;
+    } catch (error) {
+        console.log("Lỗi: ", error);
+        throw error;
+    }
+}
+
+async function updateOrder(id, body) {
+    try {
+        const { cartItems, totalAmount, userId, orderDate, orderStatus, fullName, phoneNumber, address } = body;
+
+        // You might want to add more validation here to check the structure of the body object
+
+        const updatedOrder = await ordersModel.findByIdAndUpdate(
+            id,
+            {
+                cartItems,
+                totalAmount,
+                userId,
+                orderDate,
+                orderStatus,
+                fullName,
+                phoneNumber,
+                address
+            },
+            { new: true } // This option returns the updated document
+        );
+
+        if (!updatedOrder) {
+            throw new Error('Order does not exist');
+        }
+        return updatedOrder;
+    } catch (error) {
+        console.log("Error:", error);
+        throw error;
+    }
+}
 
 
-module.exports = { getAllOrders, createOrder, getOrderById, getOrderByIdUser };
+module.exports = { getAllOrders, createOrder, getOrderById, getOrderByIdUser, deleteOrder, updateOrder };

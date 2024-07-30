@@ -3,6 +3,7 @@ const router = express.Router();
 const categoriesController = require('../controller/categories.controller');
 const path = require('path');
 const multer = require('multer');
+const fs = require('fs');
 
 router.get('/', async (req, res) => {
     try {
@@ -28,53 +29,41 @@ router.get('/', async (req, res) => {
 
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        cb(null, 'public/images'); // Thư mục lưu trữ hình ảnh
+        const uploadPath = path.join(__dirname, '../public/images/');
+        cb(null, uploadPath);
     },
     filename: function (req, file, cb) {
-        // Tên file sẽ được lưu trữ là timestamp hiện tại + tên gốc của file
         cb(null, Date.now() + '-' + file.originalname);
     }
 });
 
-
-const checkImg = ((req, file, cb) => {
-    if (!file.originalname.match(/\.(png|jpg|webp|gif)$/)) {
-        return cb(new Error('Vui lòng nhập đúng định dạng'))
+const checkImg = (req, file, cb) => {
+    if (!file.originalname.match(/\.(png|jpg|jpeg|webp|gif)$/)) {
+        return cb(new Error('Vui lòng nhập đúng định dạng'));
     }
-    cb(null, true)
-})
+    cb(null, true);
+};
 
 const upload = multer({ storage: storage, fileFilter: checkImg });
 
-router.post('/add_ct', upload.fields([
-    { name: 'image_ct', maxCount: 1 }
-]), async (req, res) => {
+router.post('/add_ct', upload.single('image_ct'), async (req, res) => {
     try {
-        const body = req.body;
-        const files = req.files;
+        console.log('Request Body:', req.body);
+        console.log('Request Files:', req.file);
 
-        // Lấy chỉ tên tệp của các ảnh tải lên từ req.files và lưu vào body
-        if (files) {
-            for (const key in files) {
-                body[key] = path.basename(files[key][0].filename);
-            }
+        const body = req.body;
+        const file = req.file;
+
+        if (file) {
+            body.image_ct = path.basename(file.filename);
+            console.log(`File saved: ${body.image_ct}`);
         }
 
-        const result = await categoriesController.createCategory(body);
-        // Tiếp tục xử lý thông tin sản phẩm
-        // Gọi hàm insertProduct từ productController và xử lý kết quả
+        await categoriesController.createCategory(body);
 
-        // Chuỗi HTML chứa mã JavaScript để hiển thị cửa sổ cảnh báo
-        const alertScript = `
-            <script>
-                alert('Thêm sản phẩm thành công');
-            </script>
-        `;
-
-        // Gửi cảnh báo và chuyển hướng về trang http://localhost:4200/admin_category
-        res.send(alertScript);
+        res.status(200).json({ message: 'Thêm cate thành công', category: body });
     } catch (error) {
-        console.log('Không thêm sản phẩm được', error);
+        console.error('Error adding product:', error);
         res.status(500).json({ message: error.message });
     }
 });
@@ -84,6 +73,15 @@ router.delete('/delete/:id', async (req, res) => {
     try {
         const { id } = req.params;
         const result = await categoriesController.deleteCategory(id);
+        const imagePath = path.join(__dirname, '../public/images/', result.image_ct);
+        fs.unlink(imagePath, (err) => {
+            if (err) {
+                console.error('Error deleting image file:', err);
+                return res.status(500).json({ message: 'Lỗi xóa tệp hình ảnh' });
+            }
+
+            res.status(200).json({ message: "Xóa sản phẩm thành công" });
+        });
         if (result) {
             return res.status(200).json({ message: 'Category deleted successfully' });
         } else {
@@ -106,15 +104,18 @@ router.get('/:id', async (req, res) => {
     }
 })
 
-router.put('/edit/:id', async (req, res) => {
+router.put('/edit/:id', upload.single('image'), async (req, res) => {
     try {
         const { id } = req.params;
         const body = req.body;
+        if (req.file) {
+            body.image_ct = req.file.path;  
+        }
         const result = await categoriesController.edit_category(id, body);
         return res.status(200).json(result);
     } catch (error) {
         console.log("Lỗi: ", error);
-        throw error;
+        res.status(500).send('Internal Server Error');
     }
 });
 

@@ -30,7 +30,7 @@ async function edit_category(id, body) {
         const result = await categoriesModel.findByIdAndUpdate(id, body, { new: true });
         return result;
     } catch (error) {
-        console.log('Loi: ', error);
+        console.log('Lỗi: ', error);
         throw error;
     }
 }

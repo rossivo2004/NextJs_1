@@ -3,6 +3,10 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Cookies from 'js-cookie';
+import PopUp from '../../components/PopUp';
+import { confirmAlert } from 'react-confirm-alert';
+
+import 'react-confirm-alert/src/react-confirm-alert.css';
 
 const imageURL = process.env.NEXT_PUBLIC_IMAGE_URL_FE;
 
@@ -38,7 +42,7 @@ export default function AdminLayout({ children }) {
           </svg>
         </button>
         <div className="flex justify-center items-center font-semibold uppercase md:ml-4 lg:px-4 text-black">
-          {user?.name || ''}
+          <PopUp >{user?.name || ''}</PopUp>
         </div>
       </header>
       <div className="flex flex-1">

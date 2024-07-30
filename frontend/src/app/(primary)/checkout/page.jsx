@@ -9,6 +9,7 @@ import { createOrder } from "../../../services/orderService";
 import toast from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
 import { clearCart } from "../../../redux/slices/cartSlice";
+import axios from "axios";
 
 const imageURLBE = process.env.NEXT_PUBLIC_IMAGE_URL_BE;
 
@@ -71,8 +72,9 @@ function CheckoutPage() {
         address: userDetails.address_us,
         status: 'Processing',
       };
+
+      
       const newOrder = await createOrder(orderData);
-      console.log('Order created successfully:', newOrder);
       dispatch(clearCart());
       toast.success('Order successfully!');
       router.push('/thank_order');

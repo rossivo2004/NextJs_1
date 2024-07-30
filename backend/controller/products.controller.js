@@ -58,7 +58,15 @@ async function getAllProduct(query) {
     }
 }
 
-
+async function getAll() {
+    try {
+        const result = await productsModel.find();
+        return result;
+    } catch (error) {
+        console.log('Loi: ', error);
+        throw error;
+    }
+}
 
 // Hàm lấy sản phẩm nổi bật
 async function getProductsHot() {
@@ -168,14 +176,14 @@ async function removeProduct(id) {
 }
 
 // Hàm cập nhật sản phẩm theo id
-async function updateByIdProduct(id, body) {
+async function updateByIdProduct(id, body, file) {
     try {
         const pro = await productsModel.findById(id);
         if (!pro) {
             throw new Error('Không tìm thấy sản phẩm');
         }
 
-        const { name_pr, description_pr, description_pr_detail, price_pr, discount_pr, quantity_pr, view_pr, weight_pr, sale_pr, rating_pr, category_pr_tag, image_pr_1 } = body;
+        const { name_pr, description_pr, description_pr_detail, price_pr, discount_pr, quantity_pr, view_pr, weight_pr, sale_pr, rating_pr, category_pr_tag } = body;
 
         pro.name_pr = name_pr;
         pro.description_pr = description_pr;
@@ -188,7 +196,20 @@ async function updateByIdProduct(id, body) {
         pro.sale_pr = sale_pr;
         pro.rating_pr = rating_pr;
         pro.category_pr_tag = category_pr_tag;
-        pro.image_pr_1 = image_pr_1;
+
+        if (file) {
+            const oldImagePath = path.join(__dirname, '../public/images/', pro.image_pr_1);
+            pro.image_pr_1 = path.basename(file.filename);
+
+            // Delete old image file
+            fs.unlink(oldImagePath, (err) => {
+                if (err) {
+                    console.error('Error deleting old image file:', err);
+                } else {
+                    console.log('Old image file deleted:', oldImagePath);
+                }
+            });
+        }
 
         const result = await pro.save();
         return result;
@@ -197,7 +218,6 @@ async function updateByIdProduct(id, body) {
         throw error;
     }
 }
-
 // Hàm tìm kiếm sản phẩm
 async function searchProduct(keyword) {
     try {
@@ -257,5 +277,5 @@ async function getProductsByPriceRange(minPrice, maxPrice) {
 module.exports = {
     getAllProduct, getProductsHot, getProductById, getProductByCategoryTag, getDiscountedProducts,
     getRelatedProducts, insertProduct, removeProduct, updateByIdProduct, searchProduct,
-    incrementProductView, countProductsByCategoryTag, getProductsByPriceRange // Thêm hàm mới vào export
+    incrementProductView, countProductsByCategoryTag, getProductsByPriceRange, getAll // Thêm hàm mới vào export
 };
