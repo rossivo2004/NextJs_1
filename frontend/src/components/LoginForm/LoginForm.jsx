@@ -2,8 +2,8 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import toast from 'react-hot-toast';
 import Cookies from 'js-cookie';
+import toast from 'react-hot-toast';
 import axios from 'axios';
 
 const LoginForm = () => {

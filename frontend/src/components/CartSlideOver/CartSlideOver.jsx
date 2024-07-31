@@ -36,7 +36,8 @@ export default function CartSlideOver({ open, setOpen }) {
     }, [open]);
 
     useEffect(() => {
-        const sum = cart.items.reduce((total, item) => total + item.price_pr * item.discount_pr * item.quantity, 0);
+        const sum = cart.items.reduce((total, item) => total + item.price_pr * item.quantity, 0);
+        
         setPriceSum(sum);
     }, [cart]);
 
@@ -136,7 +137,7 @@ export default function CartSlideOver({ open, setOpen }) {
                                                         </div>
                                                         <div className="flex flex-col justify-between items-end">
                                                             <div className="text-primary text-sm">
-                                                                {formatNumber(item.price_pr * item.discount_pr * item.quantity)}
+                                                                {formatNumber(item.price_pr * item.quantity)}
                                                                 <span> đ</span>
                                                             </div>
                                                             <div>
@@ -149,7 +150,7 @@ export default function CartSlideOver({ open, setOpen }) {
                                                         </div>
                                                     </div>
                                                 ))}
-                                                <div className="mt-4 fixed bottom-0 h-36 bg-white w-[384px] flex flex-col items-center justify-around">
+                                                <div className="mt-4 fixed bottom-0 h-36 bg-white lg:w-[384px] w-auto flex flex-col items-center justify-around">
                                                     <div className='flex items-center justify-between w-full'>
                                                         <div>Tổng</div>
                                                         <div className='font-bold text-2xl text-primary'>{formatNumber(priceSum)} đ</div>

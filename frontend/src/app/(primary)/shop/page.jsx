@@ -206,17 +206,7 @@ const Shop = ({ searchParams }) => {
                   </select>
                 </div>
               </div>
-              <div className='flex items-center'>
-                <div className='mr-4 text-black'>Show: </div>
-                <div className="relative w-60 max-w-full mx-auto">
-                  <select className="w-full px-3 py-2 text-sm text-gray-600 bg-white border rounded-lg shadow-sm outline-none appearance-none">
-                    <option value={"hahah"}>Project manager</option>
-                    <option>Software engineer</option>
-                    <option>IT manager</option>
-                    <option>UI / UX designer</option>
-                  </select>
-                </div>
-              </div>
+           
             </div>
             {/* Product Grid */}
             <div className='grid lg:grid-cols-3 lg:gap-6 grid-cols-2 gap-3'>
@@ -260,16 +250,7 @@ const Shop = ({ searchParams }) => {
               <div className='font-bold text-xl mb-2'>Filter By Price</div>
               <Shop_Filter_Price onApplyFilter={handleApplyFilter} />
             </div>
-            <div>
-              <div className='font-bold text-xl mb-2'>Product Tags</div>
-              <div className='flex flex-wrap'>
-                {[...Array(4)].map((_, i) => (
-                  <div key={i}>
-                    <div className='border-b text-text_1 mr-2 w-fit hover:text-primary border-primary cursor-pointer'>Tag {i + 1}</div>
-                  </div>
-                ))}
-              </div>
-            </div>
+           
           </div>
         </div>
       </div>

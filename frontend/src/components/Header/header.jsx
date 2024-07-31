@@ -53,20 +53,20 @@ function Header() {
             <CartSlideOver open={cartOpen} setOpen={setCartOpen} />
             <NavMenuMobile open={navOpen} setOpen={setNavOpen} />
 
-            <div className='flex px-40 w-full h-[80px] items-center justify-between'>
-                <div className='flex items-center bg-black lg:relative fixed top-0 left-0 lg:w-auto w-full lg:h-auto h-[60px]'>
+            <div className='flex px-40 w-full h-[80px] items-center justify-between z-20 relative'>
+                <div className='flex items-center bg-black lg:relative fixed top-0 left-0 lg:w-auto w-full lg:h-auto h-[60px] lg:px-0 px-4'>
 
                     <div className='block lg:hidden' onClick={() => setNavOpen(true)}>
                         <FontAwesomeIcon icon={faBars} className='text-[20px]' />
                     </div>
 
                     <div className='logo w-full flex items-center justify-center h-10'>
-                        <img src={`${imageURL}/FoodHaven.png`} alt="Logo" className='lg:w-52 lg:h-20 object-cover' />
+                        <img src={`${imageURL}/FoodHaven.png`} alt="Logo" className='lg:w-52 lg:h-20 w-20 object-cover' />
                     </div>
 
                     <div className='lg:hidden block'>
                         <div>
-                            <FontAwesomeIcon icon={faCartShopping} className='text-white text-[20px] mx-2' onClick={() => setCartOpen(true)} />
+                            <FontAwesomeIcon icon={faCartShopping} className='text-white text-[20px] lg:mx-2' onClick={() => setCartOpen(true)} />
                         </div>
                     </div>
                 </div>

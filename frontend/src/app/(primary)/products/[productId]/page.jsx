@@ -4,6 +4,10 @@ import { faCartPlus, faHeart } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useState, useEffect } from 'react';
 import { Image } from 'primereact/image';
+import toast from 'react-hot-toast';
+import { useSelector, useDispatch } from 'react-redux';
+
+import { addItem } from '../../../../redux/slices/cartSlice';
 
 import TabProductDetail from '../../../../components/TabProductDetail/TabProductDetail';
 import BoxProduct from '../../../../components/BoxProduct';
@@ -29,6 +33,9 @@ const ShopDetail = ({ params }) => {
     const [product, setProduct] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+
+    const dispatch = useDispatch();
+    const cart = useSelector((state) => state.cart);
 
 
     useEffect(() => {
@@ -63,6 +70,22 @@ const ShopDetail = ({ params }) => {
     if (!product) {
         return <div>No product found</div>;
     }
+
+    if (!product) return null;
+
+    const priceNew = product.price_pr - (product.price_pr * product.discount_pr) / 100;
+  
+    const handleAddToCart = () => {
+      dispatch(addItem({
+        _id: product._id,
+        name_pr: product.name_pr,
+        image_pr: product.image_pr_1,
+        price_pr: product.price_pr - (product.price_pr * product.discount_pr) / 100,
+        discount_pr: product.discount_pr,
+        quantity: quantity,
+      }));
+      toast.success('Added to cart!');
+    };
 
     return (
         <div>
@@ -136,13 +159,13 @@ const ShopDetail = ({ params }) => {
                                         min={0}
                                         value={quantity}
                                         className='w-20 rounded-lg border-2 border-primary h-[43px] detai_quantity mx-2 text-center'
-                                        onWheel={(e) => e.preventDefault()} // Ngăn chặn việc cuộn để thay đổi giá trị
-                                        onKeyDown={(e) => e.preventDefault()} // Ngăn chặn việc nhập từ bàn phím
+                                        onWheel={(e) => e.preventDefault()} 
+                                        onKeyDown={(e) => e.preventDefault()} 
                                     />
                                     <button onClick={() => setQuantity(quantity + 1)} className='h-[43px] px-4 text-primary font-bold rounded-lg border-2 border-primary'>+</button>
                                 </div>
                                 <div>
-                                    <button className='bg-primary text-white px-6 py-2 rounded-lg cursor-pointer hover:bg-white hover:text-primary border-2 border-primary'><FontAwesomeIcon icon={faCartPlus} className='mr-2' /> <span>Add to cart</span></button>
+                                    <button onClick={handleAddToCart} className='bg-primary text-white px-6 py-2 rounded-lg cursor-pointer hover:bg-white hover:text-primary border-2 border-primary'><FontAwesomeIcon icon={faCartPlus} className='mr-2' /> <span>Add to cart</span></button>
                                 </div>
                             </div>
                             <div>

@@ -1,11 +1,12 @@
 import React, { Fragment } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import { XMarkIcon } from '@heroicons/react/24/outline';
+import Link from 'next/link';
 
 const NavMenuMobile = ({ open, setOpen }) => {
     return (
         <Transition show={open} as={Fragment}>
-            <Dialog as="div" className="relative z-10" onClose={() => setOpen(false)}>
+            <Dialog as="div" className="relative z-50" onClose={() => setOpen(false)}>
                 <Transition.Child
                     as={Fragment}
                     enter="ease-in-out duration-500"
@@ -18,9 +19,9 @@ const NavMenuMobile = ({ open, setOpen }) => {
                     <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
                 </Transition.Child>
 
-                <div className="fixed inset-0 overflow-hidden z-50">
+                <div className="fixed inset-0 overflow-hidden">
                     <div className="absolute inset-0 overflow-hidden">
-                        <div className="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10">
+                        <div className="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10 z-50">
                             <Transition.Child
                                 as={Fragment}
                                 enter="transform transition ease-in-out duration-500 sm:duration-700"
@@ -30,7 +31,7 @@ const NavMenuMobile = ({ open, setOpen }) => {
                                 leaveFrom="translate-x-0"
                                 leaveTo="translate-x-full"
                             >
-                                <Dialog.Panel className="pointer-events-auto relative w-screen max-w-md">
+                                <Dialog.Panel className="pointer-events-auto relative w-screen max-w-md z-50">
                                     <Transition.Child
                                         as={Fragment}
                                         enter="ease-in-out duration-500"
@@ -52,15 +53,16 @@ const NavMenuMobile = ({ open, setOpen }) => {
                                             </button>
                                         </div>
                                     </Transition.Child>
-                                    <div className="flex h-full flex-col overflow-y-scroll bg-white py-5 px-2 shadow-xl">
+                                    <div className="flex h-full flex-col overflow-y-scroll bg-white py-5 px-2 shadow-xl z-40 relative">
                                         {/*<div className="px-4 sm:px-6">
                                             <Dialog.Title className="text-base font-semibold leading-6 text-gray-900 text-right">Panel title</Dialog.Title>
                                         </div>*/}
                                         <div className="relative mt-8 flex-1 px-4 sm:px-6 text-black">
-                                            <div className='border-b-2 py-3 px-2 hover:bg-slate-200'>a</div>
-                                            <div className='border-b-2 py-3 px-2 hover:bg-slate-200'>a</div>
-                                            <div className='border-b-2 py-3 px-2 hover:bg-slate-200'>a</div>
-                                            <div className='border-b-2 py-3 px-2 hover:bg-slate-200'>a</div>
+                                            <Link href={'/'}><div className='border-b-2 py-3 px-2 hover:bg-slate-200'>Home</div></Link>
+                                            <Link href={'/shop'}><div className='border-b-2 py-3 px-2 hover:bg-slate-200'>Shop</div></Link>
+                                            <Link href={'/blog'}><div className='border-b-2 py-3 px-2 hover:bg-slate-200'>Blog</div></Link>
+                                            <Link href={'/aboutus'}><div className='border-b-2 py-3 px-2 hover:bg-slate-200'>About Us</div></Link>
+                                            <Link href={'#'}><div className='border-b-2 py-3 px-2 hover:bg-slate-200'>Searh Order</div></Link>
                                         </div>
                                     </div>
                                 </Dialog.Panel>

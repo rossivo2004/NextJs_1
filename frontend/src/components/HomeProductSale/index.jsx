@@ -35,17 +35,21 @@ function HomeProductSale() {
     return (
         <div>
         {loading ? (
-            <Loading /> // Display the Loading component while fetching data
+            <Loading /> 
         ) : (
             <Swiper
-                slidesPerView={4}
-                spaceBetween={20}
-                // pagination={{
-                //     clickable: true,
-                // }}
+                slidesPerView={2}
+                spaceBetween={10}
                 modules={[Pagination]}
                 className="mySwiper"
                 loop={true}
+                breakpoints={{
+                    // cài đặt cho màn hình nhỏ hơn hoặc bằng 768px
+                    768: {
+                        slidesPerView: 4, // hiển thị 2 sản phẩm
+                        spaceBetween: 10,
+                    },
+                }}
             >
                 {products.map(product => (
                     <SwiperSlide key={product.id}>
